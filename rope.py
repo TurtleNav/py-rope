@@ -3,13 +3,11 @@ class _Rope
 
 class Rope:
 
-    def __init__(self, value, weight, length):
-        self._value = value
-        self._weight = weight
-        self._length = length
-
-        self._left = None
-        self._right = None
+    def __init__(self, data, left=None, right=None):
+        self._data = data if data else ""
+        self._length = len(data) 
+        self._left = left
+        self._right = right
 
     @property
     def is_leaf(self):
@@ -17,7 +15,7 @@ class Rope:
     
     @property
     def length(self):
-        return self._length or 0
+        return self._length
 
     @property
     def value(self):
