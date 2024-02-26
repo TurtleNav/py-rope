@@ -85,32 +85,12 @@ class Rope:
         if not self.is_leaf:
             yield from self.left
             yield from self.right
-    
-    def _copy(self, cb):
-        node = Rope()
-        if self.is_leaf:
-            node.data = cb(self.data)
-        else:
-            node.left = cb(self.left)
-            node.right = cb(self.right)
 
     def capitalize(self):
-        node = Rope()
-        if self.is_leaf:
-            node.data = self.data.capitalize()
-        else:
-            node.left = self.left.capitalize()
-            node.right = self.right.capitalize()
-        return node
+        return self._new_rope_from_method("capitalize")
     
     def casefold(self):
-        node = Rope()
-        if self.is_leaf:
-            node.data = self.data.casefold()
-        else:
-            node.left = self.left.casefold()
-            node.right = self.right.casefold()
-        return node
+        return self._new_rope_from_method("casefold")
     
     def center(self, width, fillchar=" "):
         if width <= self.weight:
@@ -182,4 +162,29 @@ class Rope:
             return end - start + 1
         # Finally, we can work through our rope
         return self._count(sub, start, end)
+
+    def encode(self, encoding="utf-8", errors="strict"):
+        return self._new_rope_from_method("encode", encoding, errors)
+    
+    """
+    Common design pattern required for any rope implementation of a string
+    method where a copy is returned with data slightly manipulated.
+    """
+    def _new_rope_from_method(self, method, *args, **kwargs):
+        node = Rope()
+        if self.is_leaf:
+            node.data = getattr(self.data, method)(*args, **kwargs)
+        else:
+            node.left = getattr(self.left, method)(*args, **kwargs)
+            node.right = getattr(self.right, method)(*args, **kwargs)
+        return node
+    
+    """
+    def endswith(suffix, start=0, end=-1):
+        if not isinstance(suffix, (str, tuple)):
+            raise TypeError("endsiwth first arg must be str or a tuple of str, not int")
+        if 
+    """
+
+
 
