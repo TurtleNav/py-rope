@@ -80,11 +80,11 @@ class Rope:
         return "".join(it)
     
     def __iter__(self):
-        yield self
-
         if not self.is_leaf:
             yield from self.left
             yield from self.right
+        else:
+            yield self
 
     """
     Common design pattern required for any rope implementation of a string
@@ -203,53 +203,32 @@ class Rope:
     def index(self, sub, start=0, end=-1):
         pass
 
-    @property
-    def isalnum(self):
-        pass
+    """
+    Wrapper for each isX string methods. All must iterate through each child
+    rope and call the corresponding str.X on that rope's data.
+    """
+    def _is_x(self, x):
+        res = True
+        for node in self:
+            res &= getattr(node.data, x)()
+            if not res:
+                break
+        return res
 
-    @property
-    def isalpha(self):
-        pass
+    # ================== The isX block of string methods ======================
 
-    @property
-    def isascii(self):
-        pass
-
-    @property
-    def isdecimal(self):
-        pass
-
-    @property
-    def isdigit(self):
-        pass
-
-    @property
-    def isidentifier(self):
-        pass
-
-    @property
-    def islower(self):
-        pass
-
-    @property
-    def isnumeric(self):
-        pass
-
-    @property
-    def isprintable(self):
-        pass
-
-    @property
-    def isspace(self):
-        pass
-
-    @property
-    def istitle(self):
-        pass
-
-    @property
-    def isupper(self):
-        pass
+    def isalnum(self): return self._is_x("isalnum")
+    def isalpha(self): return self._is_x("isalpha")
+    def isascii(self): return self._is_x("isascii")
+    def isdecimal(self): return self._is_x("isdecimal")
+    def isdigit(self): return self._is_x("isdigit")
+    def isidentifier(self): return self._is_x("isidentifier")
+    def islower(self): return self._is_x("islower")
+    def isnumeric(self): return self._is_x("isnumeric")
+    def isprintable(self): return self._is_x("isprintable")
+    def isspace(self): return self._is_x("isspace")
+    def istitle(self): return self._is_x("istitle")
+    def isupper(self): return self._is_x("isupper")
 
     # TODO
     def join(self, iterable):
