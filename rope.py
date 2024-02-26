@@ -58,54 +58,6 @@ class Rope:
             return self
         return Rope(data=None, left=self, right=other)
 
-    def delete(self, start, length):
-       return 
-
-    """
-    Splitting the rope requires consideration of special cases and recursion
-    """
-    def split(self, index):
-
-        if index == 0:
-            return None, self
-        
-        if index == self.weight:
-            return self, None
-
-        if index == self.left.weight:
-            return self.left, self.right
-
-        if index < self.left.weight:
-
-
-
-            re_left = Rope(self.left.data[:index])
-
-
-
-
-            if self.left.isleaf:
-                re_left = Rope(self.left._data[:index])
-                re_right = self.right.concat()
-            new_left = Rope(self._data[:index])
-            return Rope(self._data[:index]), self.concat(self.right)
-
-        if index - 1 == self.weight:
-            # If the requested split index is at the final index of the rope,
-            # we either return the root rope / left and right
-            if self.is_leaf:
-                return self, self.right
-            
-            return self.left, self.right
-        
-        rope = Rope()
-
-    def insert(self, index, string):
-        return NotImplemented
-
-    def report(self, index, length):
-        return NotImplemented
-
     def index(self, index):
         if (index < 0) or (index > self.weight):
             raise Exception("index is out of bounds")
@@ -177,3 +129,57 @@ class Rope:
         )
         
         return new_root
+    
+    """count substrings found in each rope in the rope tree"""
+    def _count(self, sub, start, end):
+        if self.is_leaf:
+            return self.data.count(sub, start, end+1)
+
+        # worst case scenario: sub is longer than the rope node.
+        # we could:
+        #   * concatenate as many nodes as required
+        #   * split sub at the index equivalent to available length of
+        #     current node and pass the new sub to the next node
+        #
+        if len(sub) > (self.left.weight):
+            # print("ellooo")
+            sub1, sub2 = sub[:self.left.weight], sub[self.left.weight:]
+            x = self.left._count(sub1, start, self.left.weight)
+            y = self.right._count(sub2, start, end - self.left.weight)
+            return (
+                x & y
+                )
+        
+        count = 0
+        if start < self.left.weight:
+            count += self.left._count(sub, start, end - self.right.weight)
+
+        if end >= self.left.weight:
+            count += self.right._count(sub, start - self.left.weight, end - self.left.weight)
+        return count
+
+    """Special case + error handling wrapper around _count"""
+    def count(self, sub, start=0, end=-1):
+        if not isinstance(sub, str):
+            raise TypeError(f"must be str, not {type(sub)}")
+
+        # implement the bounds found on classic strings
+        if start < 0:
+            start += self.weight
+        if (start < 0) or (start >= self.weight):
+            raise IndexError("string index out of range")
+
+        if end < 0:
+            end += self.weight
+        if (end < 0) or (end >= self.weight):
+            raise IndexError("string index out of range")
+        
+        # Not sure why but the behavior of string.count when start >= end is merely to return 0
+        if (start >= end):
+            return 0
+        
+        if not sub:
+            return end - start + 1
+        # Finally, we can work through our rope
+        return self._count(sub, start, end)
+
