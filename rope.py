@@ -86,6 +86,19 @@ class Rope:
             yield from self.left
             yield from self.right
 
+    """
+    Common design pattern required for any rope implementation of a string
+    method where a copy is returned with data slightly manipulated.
+    """
+    def _new_rope_from_method(self, method, *args, **kwargs):
+        node = Rope()
+        if self.is_leaf:
+            node.data = getattr(self.data, method)(*args, **kwargs)
+        else:
+            node.left = getattr(self.left, method)(*args, **kwargs)
+            node.right = getattr(self.right, method)(*args, **kwargs)
+        return node
+
     def capitalize(self):
         return self._new_rope_from_method("capitalize")
     
@@ -166,25 +179,161 @@ class Rope:
     def encode(self, encoding="utf-8", errors="strict"):
         return self._new_rope_from_method("encode", encoding, errors)
     
-    """
-    Common design pattern required for any rope implementation of a string
-    method where a copy is returned with data slightly manipulated.
-    """
-    def _new_rope_from_method(self, method, *args, **kwargs):
-        node = Rope()
-        if self.is_leaf:
-            node.data = getattr(self.data, method)(*args, **kwargs)
-        else:
-            node.left = getattr(self.left, method)(*args, **kwargs)
-            node.right = getattr(self.right, method)(*args, **kwargs)
-        return node
-    
-    """
+    # TODO
     def endswith(suffix, start=0, end=-1):
         if not isinstance(suffix, (str, tuple)):
             raise TypeError("endsiwth first arg must be str or a tuple of str, not int")
-        if 
-    """
+    
+    def expandtabs(self, tabsize=8):
+        return self._new_rope_from_method(tabsize)
 
+    # TODO
+    def find(self, sub, start=0, end=-1):
+        pass
 
+    # TODO
+    def format(self, *args, **kwargs):
+        pass
 
+    # TODO
+    def format_map(self, mapping):
+        pass
+
+    # TODO
+    def index(self, sub, start=0, end=-1):
+        pass
+
+    @property
+    def isalnum(self):
+        pass
+
+    @property
+    def isalpha(self):
+        pass
+
+    @property
+    def isascii(self):
+        pass
+
+    @property
+    def isdecimal(self):
+        pass
+
+    @property
+    def isdigit(self):
+        pass
+
+    @property
+    def isidentifier(self):
+        pass
+
+    @property
+    def islower(self):
+        pass
+
+    @property
+    def isnumeric(self):
+        pass
+
+    @property
+    def isprintable(self):
+        pass
+
+    @property
+    def isspace(self):
+        pass
+
+    @property
+    def istitle(self):
+        pass
+
+    @property
+    def isupper(self):
+        pass
+
+    # TODO
+    def join(self, iterable):
+        pass
+
+    # TODO
+    def ljust(self, width, fillchar=" "):
+        pass
+
+    # TODO
+    def lstrip(self, chars=None):
+        pass
+
+    # TODO
+    def maketrans(self, x, y=None, z=None):
+        pass
+
+    # TODO
+    def partition(self, sep):
+        pass
+
+    # TODO
+    def removeprefix(prefix):
+        pass
+
+    # TODO
+    def removesuffix(suffix):
+        pass
+
+    # TODO
+    def replace(self, old, new, count=None):
+        pass
+
+    # TODO
+    def rfind(self, sub, start=0, end=-1):
+        pass
+
+    # TODO
+    def rindex(self, sub, start=0, end=-1):
+        pass
+
+    # TODO
+    def rjust(self, width, fillchar=" "):
+        pass
+
+    # TODO
+    def rpartition(self, sep):
+        pass
+
+    # TODO
+    def rsplit(self, sep=None, maxsplit=-1):
+        pass
+
+    # TODO
+    def rstrip(self, chars=None):
+        pass
+
+    # TODO
+    def split(self, sep=None, maxsplit=-1):
+        pass
+
+    # TODO
+    def splitlines(keepends=False):
+        pass
+
+    # TODO
+    def startswith(self, prefix, start=0, end=-1):
+        pass
+
+    # TODO
+    def strip(self, chars=None):
+        pass
+
+    def swapcase(self):
+        return self._new_rope_from_method("swap")
+    
+    def title(self):
+        return self._new_rope_from_method("title")
+
+    def translate(self, table):
+        return self._new_rope_from_method("translate", table)
+
+    def upper(self):
+        return self._new_rope_from_method("upper")
+    
+    def zfill(self, width):
+        return self._new_rope_from_method("zfill", width)
